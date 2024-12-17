@@ -1,0 +1,44 @@
+{
+  "name": "event-consumer-mtx",
+  "version": "1.0.0",
+  "description": "Multi-Tenant Event-Driven S/4HANA Cloud Consumer",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap-cloud-sdk/connectivity": "^3.23.0",
+    "@sap-cloud-sdk/http-client": "^3.23.0",
+    "@sap-cloud-sdk/resilience": "^3.23.0",
+    "@sap/cds": "^7",
+    "@sap/cds-hana": "^2",
+    "@sap/cds-mtxs": "^1.9",
+    "@sap/xsenv": "^5.4.0",
+    "@sap/xssec": "^3.6.1",
+    "cfenv": "^1.2.4",
+    "debug": "^4.3.7",
+    "express": "^4",
+    "passport": "^0.7.0"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^1",
+    "@sap/cds-dk": "^7",
+    "@sap/eslint-plugin-cds": "^3",
+    "eslint": "^9"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch-event-consumer-mtx": "cds watch --open event-consumer-mtx/webapp/index.html?sap-ui-xx-viewCache=false"
+  },
+  "sapux": [
+    "app/event-consumer-mtx"
+  ],
+  "cds": {
+    "requires": {
+      "auth": "xsuaa",
+      "db": "hana",
+      "multitenancy": true,
+      "toggles": false,
+      "extensibility": false
+    }
+  }
+}

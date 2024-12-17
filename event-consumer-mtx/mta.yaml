@@ -1,0 +1,146 @@
+_schema-version: "3.1"
+ID: event-consumer-mtx
+description: Multi-Tenant Event-Driven S/4HANA Cloud Consumer.
+version: 1.0.0
+modules:
+  - name: event-consumer-mtx-srv
+    type: nodejs
+    path: gen/srv
+    requires:
+      - name: event-consumer-mtx-destination-service
+      - name: event-consumer-mtx-auth
+      - name: event-consumer-mtx-registry
+      - name: event-consumer-mtx-sm
+      - name: app-api
+        properties:
+          APP_PROTOCOL: ~{app-protocol}
+          APP_URI: ~{app-uri}
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+      - name: mtx-api
+        properties:
+          mtx-url: ${default-url}
+    parameters:
+      buildpack: nodejs_buildpack
+      host: ${appname}
+      memory: 256M
+      disk-quota: 1024M
+    build-parameters:
+      builder: npm-ci
+      ignore:
+        - default-*.json
+        - .env
+        - "*node_modules*"
+        - package-lock.json
+  - name: event-consumer-mtx-app
+    type: approuter.nodejs
+    path: app/event-consumer-mtx
+    build-parameters:
+      ignore:
+        - default-*.json
+        - .env
+        - "*node_modules*"
+        - package-lock.json
+    parameters:
+      disk-quota: 256M
+      memory: 256M
+      keep-existing-routes: true
+    properties:
+      TENANT_HOST_PATTERN: '^(.*)-${default-uri}'
+      SAP_JWT_TRUST_ACL: [{ "clientid": "*", "identityzone": "sap-provisioning" }]
+      SEND_XFRAMEOPTIONS: false
+    requires:
+      - name: event-consumer-mtx-auth
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv
+          url: ~{srv-url}
+          timeout: 600000
+          forwardAuthToken: true
+      - name: mtx-api
+        group: destinations
+        properties:
+          name: mtx
+          url: ~{mtx-url}
+          timeout: 600000
+    provides:
+      - name: app-api
+        properties:
+          app-protocol: ${protocol}
+          app-uri: ${default-uri}
+resources:
+  - name: event-consumer-mtx-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+  - name: event-consumer-mtx-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        init_data:
+          instance:
+            existing_destinations_policy: ignore
+            destinations:
+              - Name: event-consumer-mtx-cfapi
+                Description: CF Cloud Controller API
+                URL: ${controller-url}
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: OAuth2Password
+                tokenServiceURL: ${authorization-url}/oauth/token
+                clientId: cf
+                clientSecret:
+                User: <SetValueInCockpit>
+                Password: <SetValueInCockpit>
+        version: 1.0.0
+      service: destination
+      service-name: event-consumer-mtx-destination-service
+      service-plan: lite
+  - name: event-consumer-mtx-registry
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: event-consumer-mtx-auth
+      - name: mtx-api
+    parameters:
+      service: saas-registry
+      service-plan: application
+      service-name: event-consumer-mtx-registry
+      config:
+        xsappname: event-consumer-mtx
+        appName: event-consumer-mtx
+        displayName: Event Messages Consumer (Business Partners).
+        description: Monitor Business Partners creation/changes in S/4HANA.
+        category: SaaS Multitenant Solutions
+        appUrls:
+          getDependencies: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/dependencies
+          onSubscription: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/tenant/{tenantId}
+          onSubscriptionAsync: false
+          onUnSubscriptionAsync: false
+          onUpdateDependenciesAsync: false
+          callbackTimeoutMillis: 300000
+  - name: event-consumer-mtx-sm
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: event-consumer-mtx-auth
+    parameters:
+        service: service-manager
+        service-plan: container
+        polling_timeout_seconds: 240
+        config:
+          acquireTimeoutMillis: max
+          polling_timeout_seconds: 480
+parameters:
+  enable-parallel-deployments: true
+  keep-existing-routes: true
+  appname: event-consumer-mtx-${org}-${space}
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm install --production
+    - npx -p @sap/cds-dk cds build --production

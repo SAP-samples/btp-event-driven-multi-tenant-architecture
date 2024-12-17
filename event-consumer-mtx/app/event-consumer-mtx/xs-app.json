@@ -1,0 +1,22 @@
+{
+    "welcomeFile": "index.html",
+    "authenticationMethod": "route",
+    "routes": [
+        {
+            "source": "^/event-consumer/(.*)$",
+            "destination": "srv",
+            "csrfProtection": false,
+            "authenticationType": "none"
+        },
+        {
+            "source": "^/-/cds/.*",
+            "authenticationType": "none",
+            "destination": "mtx"
+        },
+        {
+            "source": "^/(.*)$",
+            "authenticationType": "xsuaa",
+            "localDir": "webapp"
+        }
+    ]
+}

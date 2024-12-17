@@ -1,0 +1,21 @@
+{
+  "xsappname": "event-dispatcher",
+  "tenant-mode": "dedicated",
+  "description": "Security profile of the multi-tenant event dispatcher",
+  "scopes": [
+    {
+      "name": "uaa.user",
+      "description": "UAA"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Token_Exchange",
+      "description": "UAA",
+      "scope-references": [
+        "uaa.user"
+      ]
+    }
+  ],
+  "attributes": []
+}

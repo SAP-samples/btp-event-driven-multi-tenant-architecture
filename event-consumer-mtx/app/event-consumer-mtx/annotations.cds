@@ -1,0 +1,1 @@
+using event.consumer.mtx.srv.EventConsumer as service from '../../srv/service';

@@ -1,0 +1,66 @@
+_schema-version: '3.1'
+ID: event-dispatcher
+version: 1.0.0
+description: "Event Dispatcher for Multi-tenant Event-Driven S&#x2F;4HANA Cloud Extensions"
+parameters:
+  enable-parallel-deployments: true
+  keep-existing-routes: true
+  appname: event-dispatcher-${org}-${space}
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm install --production
+    - npx -p @sap/cds-dk cds build --production
+modules:
+  - name: event-dispatcher-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+      readiness-health-check-type: http
+      readiness-health-check-http-endpoint: /health
+      host: ${appname}
+      memory: 256M
+      disk-quota: 512M
+    build-parameters:
+      builder: npm
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: event-dispatcher-messaging
+      - name: event-dispatcher-db
+      - name: event-dispatcher-auth
+      - name: event-dispatcher-destination
+  - name: event-dispatcher-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: event-dispatcher-db
+resources:
+  - name: event-dispatcher-messaging
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service: enterprise-messaging
+      service-name: s4-client1
+      service-plan: default
+  - name: event-dispatcher-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+  - name: event-dispatcher-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+  - name: event-dispatcher-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite

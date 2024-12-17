@@ -1,0 +1,13 @@
+@server = http://localhost:4003
+
+##
+# POST OPERRATIONS
+##
+
+### Consume Message Test
+POST {{server}}/event-consumer/consumeMessage
+Content-Type: application/json
+
+{
+    "msg" : { "content" : "{ 'data' : '99990' }" }
+}

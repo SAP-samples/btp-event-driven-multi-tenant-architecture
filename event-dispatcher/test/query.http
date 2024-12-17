@@ -1,0 +1,39 @@
+@server = http://localhost:4004
+
+##
+# POST OPERRATIONS
+##
+
+### Register Tenant 01
+POST {{server}}/event-dispatcher/registerTenant
+Content-Type: application/json
+Authorization: Basic YWxpY2U6
+
+{
+    "tenant" : { "id" : "2e0fdcc2-a550-4249-b1fc-604da7affc04", "subDomain" : "event-cons1", "url" : "http://localhost:4003", "source" : "/default/sap.s4.beh/740613139" }
+}
+
+### Register Tenant 02
+POST {{server}}/event-dispatcher/registerTenant
+Content-Type: application/json
+Authorization: Basic YWxpY2U6
+
+{
+    "tenant" : { "id" : "2e0fdcc2-a550-4249-b1fc-604da7affc05", "subDomain" : "event-cons1", "url" : "http://localhost:4002", "source" : "new-tenant" }
+}
+
+### Unregister Tenant 02
+POST {{server}}/event-dispatcher/unregisterTenant
+Content-Type: application/json
+Authorization: Basic YWxpY2U6
+
+{
+    "tenant" : { "id" : "2e0fdcc2-a550-4249-b1fc-604da7affc05" }
+}
+
+### Forward message test
+POST {{server}}/event-dispatcher/forwardMessage
+Content-Type: application/json
+Authorization: Basic YWxpY2U6
+
+# /default/sap.s4.beh/740740843
