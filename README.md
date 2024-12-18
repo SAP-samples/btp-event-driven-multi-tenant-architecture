@@ -131,7 +131,7 @@ cf deploy mta_archives/event-dispatcher_1.0.0.mtar
 
 ## Code Details
 
-You can find a detailed explanation about the mechanics and concepts of this project in [**this blog post**](https://blogs.sap.com/2022/09/22/build-a-user-management-microservice-in-btp-with-cap).
+You can find a detailed explanation about the mechanics and concepts of this project in [**this blog post**](https://community.sap.com/t5/technology-blogs-by-sap/event-driven-multi-tenant-architecture-on-sap-btp-with-cap-and-sap-event/ba-p/13963064).
 
 ## Known Issues
 No known issues.
@@ -139,7 +139,7 @@ No known issues.
 ## How to obtain support
 [Create an issue](https://github.com/SAP-samples/btp-event-driven-multi-tenant-architecture/issues) in this repository if you find a bug or have questions about the content.
  
-For additional support, [ask a question in SAP Community](https://community.sap.com/t5/technology-blogs-by-sap/event-driven-multi-tenant-architecture-on-sap-btp-with-cap-and-sap-event/ba-p/13963064).
+For additional support, [ask a question in SAP Community](https://community.sap.com/t5/technology-q-a/qa-p/technology-questions).
 
 ## Contributing
 If you wish to contribute code, offer fixes or improvements, please send a pull request. Due to legal reasons, contributors will be asked to accept a DCO when they create the first pull request to this project. This happens in an automated fashion during the submission process. SAP uses [the standard DCO text of the Linux Foundation](https://developercertificate.org/).
