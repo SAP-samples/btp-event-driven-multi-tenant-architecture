@@ -1,5 +1,6 @@
 # SAP BTP Event-Driven Multi-Tenant Architecture with CAP and SAP Event Mesh
 [![License: Apache2](https://img.shields.io/badge/License-Apache2-green.svg)](https://opensource.org/licenses/Apache-2.0)
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/btp-event-driven-multi-tenant-architecture)](https://api.reuse.software/info/github.com/SAP-samples/btp-event-driven-multi-tenant-architecture)
 
 ## Description
 This sample code aims to help SAP developers (customers or partners) to develop **event-driven applications** on **SAP Business Technology Platform** using **SAP Event Mesh** as the event message broker with a **SaaS Multi-Tenant** approach. The code is developed using the **SAP Cloud Application Programming Model (CAP) NodeJS framework** leveraging its out-of-the-box messaging capabilities and implements two **microservices**: the first **consumes event messages** from a **message queue** in an SAP Event Mesh **message client** and **dispatches** them to the second, which is a **multi-tenant application** that **receives** such messages in the **subscriber** according to the **message source**.
